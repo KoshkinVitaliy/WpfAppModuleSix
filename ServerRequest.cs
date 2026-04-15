@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 
 namespace WpfAppModuleSix
@@ -12,17 +13,31 @@ namespace WpfAppModuleSix
     {
         public async static Task<string> GetRequest(string url)
         {
+            
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage httpResponse = await client.GetAsync(url);
-                if(httpResponse.IsSuccessStatusCode)
+                try
                 {
-                    return await httpResponse.Content.ReadAsStringAsync();
+                    HttpResponseMessage httpResponse = await client.GetAsync(url);
+                    if (httpResponse.IsSuccessStatusCode)
+                    {
+                        return await httpResponse.Content.ReadAsStringAsync();
+                    }
+                    else
+                    {
+                        return $"Ошибка: {httpResponse.StatusCode}";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return $"Ошибка: {httpResponse.StatusCode}";
+                    MessageBox.Show($"Не удалось подключиться к серверу! {ex.Message}",
+                        "Ошибка подключения",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+
+                    return null;
                 }
+                
             }
         }
     }

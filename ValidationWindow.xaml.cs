@@ -21,6 +21,9 @@ namespace WpfAppModuleSix
     public partial class ValidationWindow : Window
     {
         private string fullNamePattern = @"^[А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+$";
+        private string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        private string innPattern = @"^\d{10}$|^\d{12}$";
+        private string mobilePhonePattern = @"^\+7 \d{3} \d{3}-\d{2}-\d{2}$";
         public ValidationWindow()
         {
             InitializeComponent();
@@ -28,10 +31,13 @@ namespace WpfAppModuleSix
 
         private async void Get_Data_Button_Click(object sender, RoutedEventArgs e)
         {
-            string url = "http://localhost:4444/TransferSimulator/fullName";
+            string url = "http://localhost:4444/TransferSimulator/inn";
             string data = await ServerRequest.GetRequest(url);
 
-            DataTextBlock.Text = GetDataFromJSON(data);
+            if (data != null)
+            {
+                DataTextBlock.Text = GetDataFromJSON(data);
+            }
         }
 
         private string GetDataFromJSON(string data)
@@ -53,22 +59,24 @@ namespace WpfAppModuleSix
             }
             else
             {
-                CheckData(DataTextBlock.Text);
+                CheckData(DataTextBlock.Text, innPattern);
             }
         }
 
-        private void CheckData(string data)
+        private void CheckData(string data, string pattern)
         {
-            if(!Regex.IsMatch(data, fullNamePattern))
+            if(!Regex.IsMatch(data, pattern))
             {
                 WordWriter.WriteToWord(
                     "C:\\Users\\admin\\source\\repos\\WpfAppModuleSix\\ТестКейс.docx",
                     1,
                     1,
+                    "Не успешно",
+                    "Не успешно",
                     data
                     );
 
-                ResultTextBlock.Text = "Данные ФИО провали валидацию!";
+                ResultTextBlock.Text = "Данные провали валидацию!";
                 ResultTextBlock.Foreground = Brushes.Red;
             }
             else
@@ -77,10 +85,12 @@ namespace WpfAppModuleSix
                     "C:\\Users\\admin\\source\\repos\\WpfAppModuleSix\\ТестКейс.docx",
                     1,
                     1,
+                    "Успешно",
+                    "Успешно",
                     data
                     );
 
-                ResultTextBlock.Text = "Данные ФИО успешно прошли валидацию!";
+                ResultTextBlock.Text = "Данные успешно прошли валидацию!";
                 ResultTextBlock.Foreground = Brushes.Green;
             }
         }

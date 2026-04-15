@@ -16,6 +16,8 @@ namespace WpfAppModuleSix
             string filePath,
             int tableIndex, 
             int columnIndex,
+            string expectedResult,
+            string actualResult,
             string data
             )
         {
@@ -37,12 +39,16 @@ namespace WpfAppModuleSix
                 else if (rowIndex <= table.Rows.Count) 
                 {
                     table.Cell(rowIndex, columnIndex).Range.Text = data;
+                    table.Cell(rowIndex, columnIndex + 1).Range.Text = expectedResult;
+                    table.Cell(rowIndex, columnIndex + 2).Range.Text = actualResult;
                     rowIndex++;
                 }
                 else
                 {
                     table.Rows.Add();
                     table.Cell(rowIndex, columnIndex).Range.Text = data;
+                    table.Cell(rowIndex, columnIndex + 1).Range.Text = expectedResult;
+                    table.Cell(rowIndex, columnIndex + 2).Range.Text = actualResult;
                     rowIndex++;
                 }
 
